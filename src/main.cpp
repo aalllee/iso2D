@@ -39,7 +39,7 @@ int main() {
     AssetManager textures;
     textures.loadTexture("prototype", "assets/prototype.png");
 
-    textures.loadTexture("tree", "assets/single/tree.png");
+    textures.loadTexture("tree01", "assets/single/tree01.png");
     textures.loadTexture("tree2", "assets/single/tree2.png");
     textures.loadTexture("moon", "assets/moonset.png");
     textures.loadTexture("character", "assets/character/SpriteSheet.png");

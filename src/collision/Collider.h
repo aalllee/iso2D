@@ -28,14 +28,19 @@ public:
 
     const std::vector<sf::Vector2f>& getVertices() const;
 
+    void removeVertex(int index);
+
     void drawDebug(sf::RenderWindow& window, sf::Color color = sf::Color::Red) const;
 
     float dot(const sf::Vector2f& a, const sf::Vector2f& b) const ;
 
     std::vector<sf::Vector2f>& getVertices () {return vertices;}
 
+    void setIsSelected(bool isSelected) {this->isSelected = isSelected;}
+
 private:
     std::vector<sf::Vector2f> vertices;
+    bool isSelected = false;
    // sf::Color color;
 };
 

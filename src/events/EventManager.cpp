@@ -60,7 +60,6 @@ void EventManager::drawDebug(sf::RenderWindow &window, sf::Color color) const{
         if (size < 2) continue;
 
 
-        if (size < 2) return;
 
         sf::VertexArray lines(sf::LineStrip, size + 1);
         for (std::size_t i = 0; i < size; ++i) {
@@ -72,6 +71,23 @@ void EventManager::drawDebug(sf::RenderWindow &window, sf::Color color) const{
         lines[size].color = color;
 
         window.draw(lines);
+
+        if (eventRegion->getIsSelected()) {
+            // Draw circle handles on each vertex
+            const float radius = 4.0f;
+            sf::CircleShape handle(radius);
+            handle.setOrigin(radius, radius); // center the circle
+            handle.setFillColor(sf::Color::Yellow);
+            handle.setOutlineColor(sf::Color::Black);
+            handle.setOutlineThickness(1.0f);
+
+            for (const auto& v : eventRegion->getPolygon()) {
+                handle.setPosition(v);
+                window.draw(handle);
+
+
+            }
+        }
 
     }
 

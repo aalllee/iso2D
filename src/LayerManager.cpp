@@ -144,6 +144,8 @@ void LayerManager::updateDrawOrderForLayer(int layerId, const EntityManager& ent
         float za = a->gridPos.x + a->gridPos.y + aWorld.x + aWorld.y;
         float zb = b->gridPos.x + b->gridPos.y + bWorld.x + bWorld.y;
 
+
+
         if (za == zb)
             return std::tie(a->gridPos.y, a->gridPos.x) < std::tie(b->gridPos.y, b->gridPos.x);
         return za < zb;

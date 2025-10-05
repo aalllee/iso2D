@@ -142,7 +142,7 @@ void SpriteWindow::renderSpriteList(EditorContext &context) {
 
 
         if ( pair.first == context.selectedSprite.textureID) {
-            // rect.setSize({spriteData.textureRect.width,spriteData.textureRect.height})
+
             rect.setSize({(float)context.selectedSprite.textureRect.width, (float)context.selectedSprite.textureRect.height}) ;
           //  rect.setPosition(customGridPos.x + x, customGridPos.y + y);
             rect.setOutlineColor(sf::Color::Green);
@@ -219,9 +219,12 @@ void SpriteWindow::renderLayerUI(EditorContext &context) {
                 for (auto& element : context.world->getCollisionManager().getColliderMap()) {
                     std::string label = "Collision " + std::to_string(element.first);
                     bool selectedCollider = context.selectedCollider == element.first;
+                    element.second->setIsSelected(selectedCollider);
+
                     ImGui::PushID(element.first);
                     if (ImGui::Selectable(label.c_str(),selectedCollider)) {
                         context.selectedCollider = element.first;
+                        context.selectedCollider_p = element.second;
 
                     }
                     ImGui::PopID();
@@ -232,10 +235,11 @@ void SpriteWindow::renderLayerUI(EditorContext &context) {
                 for (auto& element : context.world->getEventManager().getEventRegionMap()) {
                     std::string label = "Event Region " + std::to_string(element.first);
                     bool selectedEventRegion = context.selectedEventRegion == element.first;
+                    element.second->setIsSelected(selectedEventRegion);
                     ImGui::PushID(element.first);
                     if (ImGui::Selectable(label.c_str(),selectedEventRegion)) {
                         context.selectedEventRegion = element.first;
-
+                        context.selectedEventRegion_p = element.second;
                     }
                     ImGui::PopID();
 
@@ -259,13 +263,22 @@ void SpriteWindow::renderLayerUI(EditorContext &context) {
             context.selectedLayerId = context.layerManager->createLayer();
         }
 
-    if (ImGui::Button("Add Collider")) {
+    //ImGui::InputInt("vertex count", &playerRenderLayer);
+     if (ImGui::Button("Add Collider")) {
+        std::vector<sf::Vector2f> colliderVerts ={{20,20}, {50,20}, {50,50},{20,50}};
+        context.world->getCollisionManager().createCollider(colliderVerts);
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("remove vert")) {
         std::vector<sf::Vector2f> colliderVerts ={{20,20}, {50,20}, {50,50},{20,50}};
         context.world->getCollisionManager().createCollider(colliderVerts);
     }
 
     if (ImGui::Button("Remove Collider") ) {
         context.world->getCollisionManager().deleteCollider(context.selectedCollider);
+        context.selectedCollider_p = nullptr;
     }
 
     ImGui::Separator();
@@ -276,6 +289,18 @@ void SpriteWindow::renderLayerUI(EditorContext &context) {
     }
     if (ImGui::Button("Remove Event Region") ) {
         context.world->getEventManager().deleteEventRegion(context.selectedEventRegion);
+    }
+
+    bool gridSnapping = context.enableGridSnapping;
+    if (ImGui::Checkbox("Grid Snapping", &gridSnapping)) {
+        context.enableGridSnapping = gridSnapping;
+
+
+    }
+
+    bool debug = context.drawDebug;
+    if (ImGui::Checkbox("Debug", &debug)) {
+        context.drawDebug = debug;
     }
 
 
@@ -310,7 +335,7 @@ void SpriteWindow::handleEvent(EditorContext &context) {
         if (event.type == sf::Event::MouseButtonPressed) {
             sf::Vector2i mousePixel = sf::Mouse::getPosition(window);
             sf::Vector2f worldPos = window.mapPixelToCoords(mousePixel);
-
+            std::cout << "mouse pressed" << std::endl;
             for (size_t i = 0; i < sprites.size(); ++i) {
                 if (sprites[i].getGlobalBounds().contains(worldPos)) {
                     // Update context with selected sprite

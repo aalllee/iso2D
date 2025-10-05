@@ -28,6 +28,9 @@ private:
     void drawEventRegions(EditorContext& context);
     void drawPlayerDebug(EditorContext& context);
     void highlightTileOnHover(sf::Vector2i pos);
+    bool isColliderVertClicked(sf::Vector2f mouse);
+    void drawSelectionHighlight(EditorContext& context);
+
 
     void updateCamera(EditorContext& context,const sf::Time& dt);
 
@@ -44,6 +47,8 @@ private:
     EventRegion* selectedArea = nullptr;
     Collider* selectedCollider = nullptr;
     int selectedVertexIndex = 0;
+
+    bool bDrawDebug = true;
 
 };
 

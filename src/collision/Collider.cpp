@@ -40,6 +40,17 @@ bool Collider::crossesLine(const sf::Vector2f& oldPos, const sf::Vector2f& newPo
     return (side1 * side2 < 0);
 }
 
+bool Collider::isCollision(const sf::Vector2f &newPos) const {
+}
+
+void Collider::removeVertex(int index) {
+
+
+    vertices.erase(vertices.begin() + index);
+
+
+}
+
 bool Collider::crossesLineSegment(const sf::Vector2f& oldPos, const sf::Vector2f& newPos) const {
     // Check if the movement vector (oldPos → newPos) crosses segment (p1 → p2)
     sf::Vector2f p1 = vertices[0];
@@ -78,7 +89,7 @@ void Collider::drawDebug(sf::RenderWindow& window, sf::Color color) const {
     lines[vertices.size()].color = color;
 
     window.draw(lines);
-
+if (isSelected) {
     // Draw circle handles on each vertex
     const float radius = 4.0f;
     sf::CircleShape handle(radius);
@@ -93,6 +104,7 @@ void Collider::drawDebug(sf::RenderWindow& window, sf::Color color) const {
 
 
     }
+}
 }
 
 const std::vector<sf::Vector2f>& Collider::getVertices() const {

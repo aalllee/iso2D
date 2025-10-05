@@ -27,6 +27,7 @@ struct TileInstance {
     sf::IntRect textureRect;
     sf::Vector2f anchorOffset = {0,0};
     sf::Vector2f worldOffset = {0,0};
+    sf::Vector2f zOrder = {0,0};
     //int firstVertexIndex = 0;
 };
 
@@ -52,6 +53,8 @@ public:
     void insertDynamicEntity(TileInstance* tile);
 
     void buildVertexBatches();
+
+    void drawTileDebug(TileInstance* tile);
 
 
     TileInstance* getTileAtPixelPrecise(sf::Vector2f worldPos);

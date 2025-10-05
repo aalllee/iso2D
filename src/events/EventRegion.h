@@ -17,8 +17,11 @@ private:
     std::unordered_set<Entity*> charactersInside;
     std::vector<std::function<void(const Entity&)>> enterCallbacks;
     std::vector<std::function<void(const Entity&)>> exitCallbacks;
-
+    bool isSelected = false;
 public:
+
+    void setIsSelected(bool isSelected) { this->isSelected = isSelected; }
+    bool getIsSelected() const { return this->isSelected; }
 
     std::vector<sf::Vector2f>& getPolygon() {return polygon; };
 

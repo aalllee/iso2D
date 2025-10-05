@@ -2,16 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 project(game)
 
 set(CMAKE_CXX_STANDARD 20)
-
-# Platform-specific SFML hints (optional - CMake will search standard locations)
-if(APPLE)
-    # Check common Homebrew locations for SFML
-    if(EXISTS "/opt/homebrew/opt/sfml@2")
-        set(CMAKE_PREFIX_PATH "/opt/homebrew/opt/sfml@2")
-    elseif(EXISTS "/usr/local/opt/sfml@2")
-        set(CMAKE_PREFIX_PATH "/usr/local/opt/sfml@2")
-    endif()
-endif()
+set(CMAKE_PREFIX_PATH "/opt/homebrew/opt/sfml@2")
 
 
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/external/imgui)
@@ -95,10 +86,3 @@ target_link_libraries(game PRIVATE
 )
 
 target_link_libraries(game PRIVATE sfml-graphics sfml-window sfml-system)
-
-# Copy assets to build directory so the executable can find them
-add_custom_command(TARGET game POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:game>/assets
-    COMMENT "Copying assets to build directory"
-)

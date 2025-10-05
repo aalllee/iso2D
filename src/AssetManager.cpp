@@ -17,6 +17,9 @@ void AssetManager::initTileRegistry() {
     std::string characterSpriteSheet = "character";
     tileTextureLookup["character"] = { characterSpriteSheet, sf::IntRect(23,0,24,38) };
 
+    std::string tree01 = "tree01";
+    tileTextureLookup[tree01] = { tree01, sf::IntRect(0,0,105,128) };
+
 }
 
 

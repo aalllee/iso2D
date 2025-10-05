@@ -18,4 +18,21 @@ void EventRegion::drawDebug(sf::RenderWindow& window, sf::Color color) const {
     lines[polygon.size()].color = color;
 
     window.draw(lines);
+
+    if (isSelected) {
+        // Draw circle handles on each vertex
+        const float radius = 4.0f;
+        sf::CircleShape handle(radius);
+        handle.setOrigin(radius, radius); // center the circle
+        handle.setFillColor(sf::Color::Yellow);
+        handle.setOutlineColor(sf::Color::Black);
+        handle.setOutlineThickness(1.0f);
+
+        for (const auto& v : polygon) {
+            handle.setPosition(v);
+            window.draw(handle);
+
+
+        }
+    }
 }

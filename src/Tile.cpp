@@ -12,12 +12,16 @@ const sf::Vector2f &anchorOffset, const sf::Vector2f &worldOffset) {
     tile->textureRect = texRect;
     tile->anchorOffset = anchorOffset;
     tile->worldOffset = worldOffset;
+   // tile->zOrder = pos + worldOffset;
 
     TileInstance* raw = tile.get();
     tilePool.push_back(std::move(tile));
     drawOrder.push_back(raw);
     tileIndex[pos] = raw;
     dirty = true;
+
+    std::cout << "TILE ADDED - Pos.x:" << pos.x << "POS.y:" << pos.y << std::endl;
+    std::cout << "world offset" << worldOffset.x << " " << worldOffset.y << std::endl;
 }
 
 void TileLayer::removeTile(const sf::Vector2i &pos) {
@@ -76,6 +80,8 @@ void TileLayer::buildVertexBatches()  {
     }
 }
 
+
+
 TileInstance * TileLayer::getTileAtPixelPrecise(sf::Vector2f worldPos)  {
     const auto& drawList = getDrawOrder(); // already Z-sorted back to front
 
@@ -88,7 +94,7 @@ TileInstance * TileLayer::getTileAtPixelPrecise(sf::Vector2f worldPos)  {
 
         std::cout << "GRID POS" <<tile->gridPos.x << " " << tile->gridPos.y << " " << std::endl;
 
-        sf::FloatRect bounds(isoPos.x - w / 2.f, isoPos.y, w, h);
+        sf::FloatRect bounds(isoPos.x - w / 2.f, isoPos.y - h/2.f, w, h);
         std::cout << "BOUNDS:" <<bounds.left << " " << bounds.top << " " << bounds.width << " " << bounds.height << std::endl;
         std::cout << "MOUSE WORLD POS" <<worldPos.x << " " << worldPos.y << " " << std::endl;
         std::cout << "ISO POS" <<isoPos.x << " " << isoPos.y << " " << std::endl;
@@ -140,6 +146,10 @@ const std::vector<TileInstance *> & TileLayer::getDrawOrder() {
 
             int za = a->gridPos.x + a->gridPos.y + a->anchorOffset.x + a->anchorOffset.y + aWorld.x + aWorld.y;
             int zb = b->gridPos.x + b->gridPos.y + b->anchorOffset.x + b->anchorOffset.y + bWorld.x + bWorld.y;
+
+
+
+
             if (za == zb)
                 return std::tie(a->gridPos.y, a->gridPos.x) < std::tie(b->gridPos.y, b->gridPos.x);
             return za < zb;
