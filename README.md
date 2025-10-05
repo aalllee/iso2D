@@ -47,9 +47,17 @@ sudo pacman -S cmake sfml glfw
 
 ### Clone the Repository
 
+**Important:** This project uses git submodules for external dependencies. Use the `--recursive` flag:
+
 ```bash
-git clone <your-repository-url>
+git clone --recursive <your-repository-url>
 cd game
+```
+
+If you already cloned without `--recursive`, initialize submodules:
+
+```bash
+git submodule update --init --recursive
 ```
 
 ### Build Instructions
