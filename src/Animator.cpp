@@ -2,7 +2,7 @@
 // Created by User on 27/05/2025.
 //
 
-#include "../include/Animator.h"
+#include "Animator.h"
 
 
 void Animator::play(const Animation& anim, bool loop) {

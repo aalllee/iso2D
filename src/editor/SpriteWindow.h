@@ -9,8 +9,8 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include "EditorContext.h"
-#include "../../include/World.h"
-#include "../../include/AssetManager.h"
+#include "World.h"
+#include "AssetManager.h"
 
 class SpriteWindow {
 

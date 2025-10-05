@@ -5,7 +5,7 @@
 #ifndef ANIMATOR_H
 #define ANIMATOR_H
 
-#include "../include/Animation.h"
+#include "Animation.h"
 #include <SFML/Graphics.hpp>
 
 class Animator {

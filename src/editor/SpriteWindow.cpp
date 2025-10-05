@@ -3,7 +3,7 @@
 //
 
 #include "SpriteWindow.h"
-#include "../../include/WorldSerializer.h"
+#include "WorldSerializer.h"
 #include <iostream>
 
 SpriteWindow::SpriteWindow(sf::Vector2u size, const std::string &title)

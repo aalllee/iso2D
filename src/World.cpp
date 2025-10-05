@@ -2,7 +2,7 @@
 // Created by User on 24/05/2025.
 //
 
-#include "../include/World.h"
+#include "World.h"
 //include "../include/Tile.h"
 #include "../src/events/EventRegion.h"
 

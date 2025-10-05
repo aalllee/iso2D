@@ -1,4 +1,4 @@
-#include "../include/Tile.h"
+#include "Tile.h"
 
 void TileLayer::addTile(const sf::Vector2i &pos, const std::string &textureID, const sf::IntRect &texRect,
 const sf::Vector2f &anchorOffset, const sf::Vector2f &worldOffset) {

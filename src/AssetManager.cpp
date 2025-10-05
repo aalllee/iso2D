@@ -2,7 +2,7 @@
 // Created by User on 16/05/2025.
 //
 
-#include "../include/AssetManager.h"
+#include "AssetManager.h"
 
 #include <stdexcept>
 #include <string>

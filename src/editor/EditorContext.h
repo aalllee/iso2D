@@ -7,12 +7,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../../include/Tile.h"
-#include "../../include/AssetManager.h"
-#include "../../include/EntityManager.h"
-#include "../../include/LayerManager.h"
-#include "../../include/World.h"
-#include "../../include/IsoCamera.h"
+#include "Tile.h"
+#include "AssetManager.h"
+#include "EntityManager.h"
+#include "LayerManager.h"
+#include "World.h"
+#include "IsoCamera.h"
 
 #include <string>
 

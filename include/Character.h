@@ -6,7 +6,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../include/Tile.h"
+#include "Tile.h"
 
 
 

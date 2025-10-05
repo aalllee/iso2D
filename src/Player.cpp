@@ -2,7 +2,7 @@
 // Created by User on 24/05/2025.
 //
 
-#include "../include/Player.h"
+#include "Player.h"
 #include "collision/Collider.h"
 
 

@@ -1,4 +1,4 @@
-#include "../include/WorldSerializer.h"
+#include "WorldSerializer.h"
 #include <fstream>
 #include <stdexcept>
 

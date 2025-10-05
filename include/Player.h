@@ -4,10 +4,10 @@
 
 #ifndef PLAYER_H
 #define PLAYER_H
-#include "../include/Entity.h"
-#include "../src/collision/Collider.h"
-#include "../include/Animation.h"
-#include "../include/Animator.h"
+#include "Entity.h"
+#include "collision/Collider.h"
+#include "Animation.h"
+#include "Animator.h"
 
 
 class Player : public Entity {

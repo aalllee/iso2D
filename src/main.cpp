@@ -1,20 +1,20 @@
 #include <iostream>
 #include <ostream>
 #include <SFML/Graphics.hpp>
-#include "../include/Tile.h"
+#include "Tile.h"
 #include <vector>
 #include <filesystem>
-#include "../include/World.h"
-#include "../include/LayerManager.h"
+#include "World.h"
+#include "LayerManager.h"
 #include "editor/SpriteWindow.h"
 namespace fs = std::filesystem;
 
-#include "../include/IsoCamera.h"
-#include "../include/AssetManager.h"
+#include "IsoCamera.h"
+#include "AssetManager.h"
 #include <string>
 
 #include "imgui-SFML.h"
-#include "../../include/util/math.h"
+#include "util/math.h"
 #include "editor/EditorWindow.h"
 
 const int TILE_WIDTH = 32;

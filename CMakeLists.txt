@@ -82,6 +82,7 @@ add_executable(game src/main.cpp
 
 target_include_directories(game PRIVATE
         ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/src
         ${IMGUI_DIR}
         ${IMGUI_DIR}/backends
         ${IMGUI_SFML_DIR}

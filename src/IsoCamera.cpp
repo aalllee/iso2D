@@ -1,4 +1,4 @@
-#include "../include/IsoCamera.h"
+#include "IsoCamera.h"
 
 #include <iostream>
 

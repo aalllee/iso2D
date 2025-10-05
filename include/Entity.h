@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
-#include "../include/Tile.h"
+#include "Tile.h"
 
 enum class EntityType {
     Base,

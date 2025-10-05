@@ -1,4 +1,4 @@
-#include "../include/LayerManager.h"
+#include "LayerManager.h"
 #include <algorithm>
 #include <iostream>
 

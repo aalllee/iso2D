@@ -6,7 +6,7 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include "math.h"
-#include "../../include/util/math.h"
+#include "util/math.h"
 
 EditorWindow::EditorWindow(sf::Vector2u size, const std::string &title) :window(sf::VideoMode(size.x, size.y), title) {
 

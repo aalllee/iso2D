@@ -1,4 +1,4 @@
-#include "../include/EntityManager.h"
+#include "EntityManager.h"
 
 void EntityManager::addEntity(std::unique_ptr<Entity> entity) {
     if (!entity) return;
