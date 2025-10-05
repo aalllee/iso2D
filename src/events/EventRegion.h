@@ -8,7 +8,7 @@
 #include <vector>
 #include <unordered_set>
 #include <SFML/Graphics.hpp>
-#include "../../../include/Entity.h"
+#include "Entity.h"
 
 class EventRegion {
 

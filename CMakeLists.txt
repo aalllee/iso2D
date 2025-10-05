@@ -81,6 +81,7 @@ add_executable(game src/main.cpp
 #target_include_directories(game PRIVATE imgui imgui-sfml-2.6.1)
 
 target_include_directories(game PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
         ${IMGUI_DIR}
         ${IMGUI_DIR}/backends
         ${IMGUI_SFML_DIR}
