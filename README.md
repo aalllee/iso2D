@@ -93,19 +93,21 @@ cmake --build .
 
 ### Running the Game
 
-After building, the executable will be in the build directory:
+**IMPORTANT:** The executable must be run from the build directory where assets are located.
 
 **macOS/Linux:**
 ```bash
-./build/game
+cd build
+./game
 ```
 
 **Windows:**
 ```bash
-build\Release\game.exe
+cd build\Release
+game.exe
 ```
 
-The `assets` folder will be automatically copied to the build directory.
+The `assets` folder is automatically copied to the build directory during compilation.
 
 ## Project Structure
 

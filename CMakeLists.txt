@@ -76,7 +76,9 @@ add_executable(game src/main.cpp
         src/collision/CollisionManager.h
         src/editor/EditorWindow.cpp
         src/editor/EditorWindow.h
-        src/WorldSerializer.cpp)
+        src/WorldSerializer.cpp
+        include/Tree.h
+        src/Tree.cpp)
 
 #target_include_directories(game PRIVATE imgui imgui-sfml-2.6.1)
 

@@ -36,12 +36,15 @@ private:
 
 
     sf::RenderWindow window;
+    sf::RenderWindow spritePropertiesWindow;
     sf::View view;
     std::vector<sf::Sprite> sprites;
     std::vector<TileInstance> spriteViewTiles;
 
     // You might track selected state here or via context
     sf::RectangleShape selectionHighlight;
+
+    bool cachedSpriteList = false;
 };
 
 

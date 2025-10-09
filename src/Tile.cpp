@@ -25,11 +25,14 @@ const sf::Vector2f &anchorOffset, const sf::Vector2f &worldOffset) {
 }
 
 void TileLayer::removeTile(const sf::Vector2i &pos) {
-    TileInstance* tileToRemove = tileIndex[pos];
 
-    if (!tileToRemove) return; //nullptr guard
+    auto it = tileIndex.find(pos);
+    if (it == tileIndex.end()) {
+        return;
+    }
+   // if (!tileToRemove) return; //nullptr guard
 
-
+    TileInstance* tileToRemove = it->second;
     tileIndex.erase(tileToRemove->gridPos);
 
     drawOrder.erase(std::remove(drawOrder.begin(), drawOrder.end(),tileToRemove), drawOrder.end());
@@ -81,6 +84,15 @@ void TileLayer::buildVertexBatches()  {
 }
 
 
+void TileLayer::setWorldOffsetPerTextureID(const std::string &textureID, sf::Vector2f worldOffset) {
+
+    for (auto& tile : tilePool) {
+        if (tile && tile->textureID == textureID) {
+            tile->worldOffset = worldOffset;
+        }
+
+    }
+}
 
 TileInstance * TileLayer::getTileAtPixelPrecise(sf::Vector2f worldPos)  {
     const auto& drawList = getDrawOrder(); // already Z-sorted back to front

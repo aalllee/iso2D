@@ -140,7 +140,7 @@ void Player::animate() {
 void Player::update(float deltaTime,  const std::vector<std::unique_ptr<Collider>>& colliders) {
     handleInput(deltaTime, colliders);
     //animate();
-
+    std::cout << this->renderTile.textureRect.left << std::endl;
     animator.update(deltaTime);
     renderTile.textureRect = animator.getCurrentFrameRect();
 

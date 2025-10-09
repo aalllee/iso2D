@@ -28,13 +28,13 @@ void WorldSerializer::saveToFile(const World& world, const std::string& filename
     }
 }
 
-void WorldSerializer::loadFromFile(World& world, const std::string& filename) {
+void WorldSerializer::loadFromFile(World& world, const std::string& filename, AssetManager* assetManager) {
     std::ifstream in(filename);
     if (!in.is_open()) return;
 
     json j;
     in >> j;
-    load(world, j);
+    load(world, j,assetManager);
 }
 
 json WorldSerializer::save(const World& w) {
@@ -58,7 +58,7 @@ json WorldSerializer::save(const World& w) {
                 {"textureID", tile->textureID},
                 {"anchorOffset", {tile->anchorOffset.x, tile->anchorOffset.y}},
                 {"worldOffset", {tile->worldOffset.x, tile->worldOffset.y}},
-                {"texRect", {tile->textureRect.left, tile->textureRect.top, tile->textureRect.width, tile->textureRect.height}}
+                //{"texRect", {tile->textureRect.left, tile->textureRect.top, tile->textureRect.width, tile->textureRect.height}}
             });
         }
 
@@ -72,12 +72,14 @@ json WorldSerializer::save(const World& w) {
             {"x", entity->getTileInstance()->gridPos.x},
             {"y", entity->getTileInstance()->gridPos.y},
             {"textureID", entity->getTileInstance()->textureID},
+/*
             {"texRect", {
                 entity->getTileInstance()->textureRect.left,
                 entity->getTileInstance()->textureRect.top,
                 entity->getTileInstance()->textureRect.width,
                 entity->getTileInstance()->textureRect.height
             }}
+            */
         });
 
         entityJson["data"].push_back({
@@ -119,13 +121,14 @@ json WorldSerializer::save(const World& w) {
     return j;
 }
 
-void WorldSerializer::load(World& world, const json& j) {
+void WorldSerializer::load(World& world, const json& j, AssetManager* assetManager) {
 
     world.getCollisionManager().deleteAllColliders();
     world.getEventManager().deleteAllEventRegions();
 
     LayerManager& layerManager = world.getLayerManager();
     EntityManager& entityManager = world.getEntityManager();
+    const std::unordered_map<std::string, TileTextureData> textureData = assetManager->getTileTextureLookup();
 
     while (!layerManager.getDrawOrder().empty()) {
         layerManager.removeLayer(layerManager.getDrawOrder().back());
@@ -156,10 +159,11 @@ void WorldSerializer::load(World& world, const json& j) {
                             playerTile->gridPos.x = tile.value("x", 0);
                             playerTile->gridPos.y = tile.value("y", 0);
                             playerTile->textureID = tile.value("textureID", "");
-                            const auto& rect = tile["texRect"];
-                            if (rect.size() == 4) {
-                                player->setTextureRect({rect[0], rect[1], rect[2], rect[3]});
-                            }
+                            sf::IntRect rect = assetManager->getTileRect(playerTile->textureID);
+                           // const auto& rect = tile["texRect"];
+
+                            player->setTextureRect(rect);
+
                         }
                     }
                 }
@@ -183,8 +187,9 @@ void WorldSerializer::load(World& world, const json& j) {
             std::string texID = tileJson["textureID"];
             auto anchorOffset_ = tileJson["anchorOffset"];
             auto worldOffset_ = tileJson["worldOffset"];
-            auto r = tileJson["texRect"];
-            sf::IntRect rect{r[0], r[1], r[2], r[3]};
+           // auto r = tileJson["texRect"];
+
+            sf::IntRect rect = assetManager->getTileRect(texID);
 
             sf::Vector2f anchorOffset{anchorOffset_[0], anchorOffset_[1]};
             sf::Vector2f worldOffset{worldOffset_[0], worldOffset_[1]};

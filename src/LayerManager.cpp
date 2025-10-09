@@ -83,20 +83,42 @@ void LayerManager::renderAll_interleavedBatching(sf::RenderWindow& window, Asset
         updateDrawOrderForLayer(id, entityManager);
 
         for (TileInstance* tile : perLayerDrawOrder) {
-            std::string texID = textures.getTileTextureLookup().at(tile->textureID).textureID;
+            // Safe lookup - handle both tiles and entities
+            const auto& lookup = textures.getTileTextureLookup();
+            auto lookupIt = lookup.find(tile->textureID);
+
+            std::string texID;
+            sf::IntRect rect;
+
+            if (lookupIt != lookup.end()) {
+                // Found in tile registry
+                texID = lookupIt->second.textureID;
+                rect = lookupIt->second.texRect;
+            } else {
+                // Entity texture - use tile's own data
+                texID = tile->textureID;
+                rect = tile->textureRect;
+            }
+
+            if (tile->textureID == "character") {
+                texID = tile->textureID;
+                rect = tile->textureRect;
+            }
 
             if (texID != currentTextureID) {
                 if (currentBatch.getVertexCount() > 0) {
-                    currentState.texture = &textures.getTextures().at(currentTextureID);
-                    window.draw(currentBatch, currentState);
+                    auto texIt = textures.getTextures().find(currentTextureID);
+                    if (texIt != textures.getTextures().end()) {
+                        currentState.texture = &texIt->second;
+                        window.draw(currentBatch, currentState);
+                        drawCalls++;
+                    }
                     currentBatch.clear();
-                    drawCalls++;
                 }
                 currentTextureID = texID;
             }
 
             sf::Vector2f pos = Math::isoToCart(tile->gridPos.x, tile->gridPos.y) + tile->worldOffset;
-            sf::IntRect rect = (tile->textureID == "character") ? tile->textureRect : textures.getTileTextureLookup().at(tile->textureID).texRect;
 
             float w = static_cast<float>(rect.width);
             float h = static_cast<float>(rect.height);
@@ -105,16 +127,20 @@ void LayerManager::renderAll_interleavedBatching(sf::RenderWindow& window, Asset
             int opacity = layerOpacity[id] * 255;
 
             sf::Color color(255, 255, 255, opacity);
-            currentBatch.append(sf::Vertex({pos.x - w / 2.f, pos.y - h / 2.f}, color, {tx, ty}));
-            currentBatch.append(sf::Vertex({pos.x + w / 2.f, pos.y - h / 2.f}, color, {tx + w, ty}));
-            currentBatch.append(sf::Vertex({pos.x + w / 2.f, pos.y + h / 2.f}, color, {tx + w, ty + h}));
-            currentBatch.append(sf::Vertex({pos.x - w / 2.f, pos.y + h / 2.f}, color, {tx, ty + h}));
+            tile->color.a = opacity;
+            currentBatch.append(sf::Vertex({pos.x - w / 2.f, pos.y - h / 2.f}, tile->color, {tx, ty}));
+            currentBatch.append(sf::Vertex({pos.x + w / 2.f, pos.y - h / 2.f}, tile->color, {tx + w, ty}));
+            currentBatch.append(sf::Vertex({pos.x + w / 2.f, pos.y + h / 2.f}, tile->color, {tx + w, ty + h}));
+            currentBatch.append(sf::Vertex({pos.x - w / 2.f, pos.y + h / 2.f}, tile->color, {tx, ty + h}));
         }
 
         if (currentBatch.getVertexCount() > 0) {
-            currentState.texture = &textures.getTextures().at(currentTextureID);
-            window.draw(currentBatch, currentState);
-            drawCalls++;
+            auto texIt = textures.getTextures().find(currentTextureID);
+            if (texIt != textures.getTextures().end()) {
+                currentState.texture = &texIt->second;
+                window.draw(currentBatch, currentState);
+                drawCalls++;
+            }
         }
     }
 }

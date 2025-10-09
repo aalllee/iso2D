@@ -4,6 +4,7 @@
 
 #include "World.h"
 //include "../include/Tile.h"
+#include "Tree.h"
 #include "../src/events/EventRegion.h"
 
 World::World() {
@@ -14,6 +15,9 @@ void World::init() {
     int backgroundLayer = layerManager.createLayer("Base");
 
 
+    //Create demo tree entity
+    auto tree = std::make_unique<Tree>();
+    entityManager.addEntity(std::move(tree));
 
     // Create and add player
     auto player = std::make_unique<Player>();

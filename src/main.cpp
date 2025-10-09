@@ -7,6 +7,15 @@
 #include "World.h"
 #include "LayerManager.h"
 #include "editor/SpriteWindow.h"
+
+#ifdef __APPLE__
+    #include <mach-o/dyld.h>
+#elif defined(_WIN32)
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
+
 namespace fs = std::filesystem;
 
 #include "IsoCamera.h"
@@ -25,9 +34,34 @@ const int MAP_HEIGHT = 5;
 sf::Font debugFont;
 sf::Clock deltaClock;
 
-int main() {
+// Get the directory where the executable is located
+std::string getExecutableDir() {
+    #ifdef __APPLE__
+        char path[1024];
+        uint32_t size = sizeof(path);
+        if (_NSGetExecutablePath(path, &size) == 0) {
+            return fs::path(path).parent_path().string() + "/";
+        }
+    #elif defined(_WIN32)
+        char path[MAX_PATH];
+        GetModuleFileNameA(NULL, path, MAX_PATH);
+        return fs::path(path).parent_path().string() + "\\";
+    #else
+        char path[1024];
+        ssize_t len = readlink("/proc/self/exe", path, sizeof(path)-1);
+        if (len != -1) {
+            path[len] = '\0';
+            return fs::path(path).parent_path().string() + "/";
+        }
+    #endif
+    return "./"; // fallback to current directory
+}
 
-    if (!debugFont.loadFromFile("../assets/fonts/Arial.ttf")) {
+int main() {
+    std::string exeDir = getExecutableDir();
+    std::cout << "Executable directory: " << exeDir << std::endl;
+
+    if (!debugFont.loadFromFile(exeDir + "assets/fonts/Arial.ttf")) {
         std::cout << "Failed to load font" << std::endl;
     }
 
@@ -37,12 +71,14 @@ int main() {
     LayerManager& layerManager = world.getLayerManager();
 
     AssetManager textures;
-    textures.loadTexture("prototype", "assets/prototype.png");
+    textures.loadTexture("prototype", exeDir + "assets/prototype.png");
+    textures.loadTexture("spiritHomeTerrain", exeDir + "assets/spiritHomeTerrain.png");
+    textures.setDebugFont(debugFont);
 
-    textures.loadTexture("tree01", "assets/single/tree01.png");
-    textures.loadTexture("tree2", "assets/single/tree2.png");
-    textures.loadTexture("moon", "assets/moonset.png");
-    textures.loadTexture("character", "assets/character/SpriteSheet.png");
+    textures.loadTexture("tree01", exeDir + "assets/single/tree01.png");
+    textures.loadTexture("tree2", exeDir + "assets/single/tree2.png");
+    textures.loadTexture("moon", exeDir + "assets/moonset.png");
+    textures.loadTexture("character", exeDir + "assets/character/SpriteSheet.png");
 
     textures.initTileRegistry();
 

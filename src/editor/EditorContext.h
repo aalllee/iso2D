@@ -19,18 +19,19 @@
 enum class Mode {
     Place, //Num1
     Edit ,// Num2
-    EditCollider
+    EditCollider,
+    Universal,
 
 };
 
 struct EditorContext {
 
-    Mode currentMode = Mode::Place;
+    Mode currentMode = Mode::Universal;
 
     AssetManager* assetManager = nullptr;
     EntityManager* entityManager = nullptr;
     LayerManager* layerManager = nullptr;
-    TileInstance selectedSprite;
+    TileInstance* selectedSprite= nullptr;
     TileInstance* selectedTile = nullptr;
     Collider* selectedCollider_p = nullptr;
     EventRegion* selectedEventRegion_p = nullptr;
@@ -59,6 +60,12 @@ struct EditorContext {
     bool enableGridSnapping = false;
 
     bool drawDebug = true;
+    bool showTileDebug = true;
+
+    float worldOffset_temp = 0.0f;
+
+
+
 
 
 };

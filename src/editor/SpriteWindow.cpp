@@ -16,6 +16,7 @@ SpriteWindow::SpriteWindow(sf::Vector2u size, const std::string &title)
     selectionHighlight.setFillColor(sf::Color::Transparent);
     selectionHighlight.setOutlineColor(sf::Color::Red);
     selectionHighlight.setOutlineThickness(1.f);
+
 }
 
 void SpriteWindow::SaveLoadUI(EditorContext& context) {
@@ -36,7 +37,7 @@ void SpriteWindow::SaveLoadUI(EditorContext& context) {
     ImGui::SameLine();
 
     if (ImGui::Button("Load World")) {
-        WorldSerializer::loadFromFile(*context.world, filenameBuf);
+        WorldSerializer::loadFromFile(*context.world, filenameBuf, context.assetManager);
     }
 
 }
@@ -49,11 +50,10 @@ void SpriteWindow::update(const sf::Time &dt, EditorContext &context) {
 
     int mode = static_cast<int>(context.currentMode);
     ImGui::Text("Editor mode:");
-    if (ImGui::RadioButton("Edit", mode == 1)) context.currentMode = Mode::Edit;
-    ImGui::SameLine();
-    if (ImGui::RadioButton("Place", mode == 0)) context.currentMode = Mode::Place;
     ImGui::SameLine();
     if (ImGui::RadioButton("Collider", mode == 2)) context.currentMode = Mode::EditCollider;
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Universal", mode==3)) context.currentMode = Mode::Universal;
 
 
 
@@ -63,25 +63,52 @@ void SpriteWindow::update(const sf::Time &dt, EditorContext &context) {
             ImGui::EndTabItem();
         }
 
+       if (context.selectedSprite) {
 
-        if (ImGui::BeginTabItem("Save / Load")) {
-            SaveLoadUI(context);
-            ImGui::EndTabItem();
-        }
+           if (ImGui::BeginTabItem("Sprite Properties")) {
+               // Safe lookup - check if key exists
+               const auto& lookup = context.assetManager->getTileTextureLookup();
+               auto it = lookup.find(context.selectedSprite->textureID);
+
+               if (it != lookup.end()) {
+                   sf::Vector2f wo = it->second.worldOffset;
+
+                   float wo_temp[2] = {wo.x, wo.y};
+                   ImGui::SetNextItemWidth(100.0f);
+                   if (ImGui::InputFloat2("World Offset", wo_temp)) {
+
+                       sf::Vector2f newWorldOffset = {wo_temp[0], wo_temp[1]};
+
+                       context.assetManager->updateDefaultWorldOffset(context.selectedSprite->textureID, newWorldOffset);
+
+                       for (auto& layer : context.layerManager->getLayers()) {
+                            for (auto& tile : layer.second.getTilePool()) {
+                                if (tile->textureID == context.selectedSprite->textureID) {
+                                    tile->worldOffset = newWorldOffset;
+                                }
+                            }
+                       }
+                   }
+               } else {
+                   ImGui::Text("Sprite not found in asset registry: %s", context.selectedSprite->textureID.c_str());
+               }
+
+               ImGui::EndTabItem();
+           }
+       }
+
+           if (ImGui::BeginTabItem("Save / Load")) {
+               SaveLoadUI(context);
+               ImGui::EndTabItem();
+           }
+
 
         ImGui::EndTabBar();
     }
 
 
 
-    if (context.selectedTile) {
-        float tileAnchor_temp[2] = { context.selectedTile->anchorOffset.x,context.selectedTile->anchorOffset.y };
-        if (ImGui::InputFloat2("Tile Anchor",tileAnchor_temp)) {
-            context.selectedTile->anchorOffset.x = tileAnchor_temp[0];
-            context.selectedTile->anchorOffset.y = tileAnchor_temp[1];
 
-        }
-    }
 
     if (context.entityManager && context.entityManager->getPlayer()) {
         int playerRenderLayer = context.entityManager->getPlayer()->getRenderLayer();
@@ -106,13 +133,50 @@ bool SpriteWindow::isOpen() const {
 }
 
 void SpriteWindow::renderSpriteList(EditorContext &context) {
+    if (context.assetManager == nullptr) return;
+    if ( cachedSpriteList) {
+        for (int i=0; i<sprites.size(); i++) {
+            window.draw(sprites[i]);
+            sf::FloatRect bounds = sprites[i].getGlobalBounds();
+            sf::RectangleShape rect;
+            rect.setPosition(bounds.left, bounds.top);
+            rect.setSize({bounds.width, bounds.height});
+            rect.setFillColor(sf::Color::Transparent);
+
+
+
+            if ( context.selectedSprite &&  spriteViewTiles[i].textureID == context.selectedSprite->textureID) {
+
+                rect.setSize({(float)context.selectedSprite->textureRect.width, (float)context.selectedSprite->textureRect.height}) ;
+                //  rect.setPosition(customGridPos.x + x, customGridPos.y + y);
+                rect.setOutlineColor(sf::Color::Green);
+            }
+            else {
+                rect.setOutlineColor(sf::Color::Blue);
+            }
+
+           // x+= sprite.getGlobalBounds().width + 10;
+
+            rect.setOutlineThickness(1.0f);
+
+            window.draw(rect);
+
+
+        }
+
+
+
+        return;
+    }
 
     sprites.clear();
+    spriteViewTiles.clear();
     int x=0,y =0;
 
 
-    if (context.assetManager == nullptr) return;
 
+
+    std::cout << "spriteViewTiles Size: " << spriteViewTiles.size() << std::endl;
 
     for (const auto& pair : context.assetManager->getTileTextureLookup()) {
         sf::Sprite sprite(context.assetManager->getTexture(pair.second.textureID));
@@ -121,18 +185,20 @@ void SpriteWindow::renderSpriteList(EditorContext &context) {
         spriteData.gridPos = {x,y};
         spriteData.textureID = pair.first; //sprite texture ID (grass, stone, ..)
         spriteData.textureRect = pair.second.texRect;
+        spriteData.worldOffset = pair.second.worldOffset;
         sprite.setTextureRect(pair.second.texRect);
 
         sprite.setPosition(x, y);
         sprites.push_back(sprite);
         spriteViewTiles.push_back(spriteData);
 
-        window.draw(sprite);
+       // window.draw(sprite);
 
 
 
 
         sf::FloatRect bounds = sprite.getGlobalBounds();
+
 
 
         sf::RectangleShape rect;
@@ -141,9 +207,10 @@ void SpriteWindow::renderSpriteList(EditorContext &context) {
         rect.setFillColor(sf::Color::Transparent);
 
 
-        if ( pair.first == context.selectedSprite.textureID) {
 
-            rect.setSize({(float)context.selectedSprite.textureRect.width, (float)context.selectedSprite.textureRect.height}) ;
+        if ( context.selectedSprite && pair.first == context.selectedSprite->textureID) {
+
+            rect.setSize({(float)context.selectedSprite->textureRect.width, (float)context.selectedSprite->textureRect.height}) ;
           //  rect.setPosition(customGridPos.x + x, customGridPos.y + y);
             rect.setOutlineColor(sf::Color::Green);
         }
@@ -158,6 +225,7 @@ void SpriteWindow::renderSpriteList(EditorContext &context) {
         window.draw(rect);  // Draw the bounding box
     }
 
+    cachedSpriteList = true;
 }
 
 void SpriteWindow::renderLayerUI(EditorContext &context) {
@@ -339,9 +407,11 @@ void SpriteWindow::handleEvent(EditorContext &context) {
             for (size_t i = 0; i < sprites.size(); ++i) {
                 if (sprites[i].getGlobalBounds().contains(worldPos)) {
                     // Update context with selected sprite
-                    context.selectedSprite.textureID = spriteViewTiles[i].textureID;
-                    context.selectedSprite.textureRect = sprites[i].getTextureRect();
-                    std::cout << "Sprite " << context.selectedSprite.textureID << " selected.\n";
+                    context.selectedSprite = &spriteViewTiles[i];
+                    //context.selectedSprite->textureID = spriteViewTiles[i].textureID;
+                    //context.selectedSprite->textureRect = sprites[i].getTextureRect();
+
+                    std::cout << "Sprite " << context.selectedSprite->textureID << " selected.\n";
                     break;
                 }
             }

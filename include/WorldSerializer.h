@@ -14,11 +14,11 @@ EntityType entityTypeFromString(const std::string& str);
 class WorldSerializer {
 public:
     static void saveToFile(const World& world, const std::string& filename);
-    static void loadFromFile(World& world, const std::string& filename);
+    static void loadFromFile(World& world, const std::string& filename,AssetManager* assetManager);
 
 private:
     static nlohmann::json save(const World& world);
-    static void load(World& world, const nlohmann::json& j);
+    static void load(World& world, const nlohmann::json& j, AssetManager* assetManager);
 };
 
 #endif // WORLD_SERIALIZER_H

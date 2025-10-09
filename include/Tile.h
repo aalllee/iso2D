@@ -28,6 +28,7 @@ struct TileInstance {
     sf::Vector2f anchorOffset = {0,0};
     sf::Vector2f worldOffset = {0,0};
     sf::Vector2f zOrder = {0,0};
+    sf::Color color = {255,255,255,255};
     //int firstVertexIndex = 0;
 };
 
@@ -55,6 +56,8 @@ public:
     void buildVertexBatches();
 
     void drawTileDebug(TileInstance* tile);
+
+    void setWorldOffsetPerTextureID(const std::string& textureID, sf::Vector2f worldOffset);
 
 
     TileInstance* getTileAtPixelPrecise(sf::Vector2f worldPos);

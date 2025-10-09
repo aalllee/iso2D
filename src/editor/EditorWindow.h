@@ -7,6 +7,15 @@
 
 #include <SFML/Graphics.hpp>
 #include "EditorContext.h"
+#include <set>
+
+struct Vector2iCompare {
+    bool operator()(const sf::Vector2i& a, const sf::Vector2i& b) const {
+        if (a.x == b.x)
+            return a.y < b.y;
+        return a.x < b.x;
+    }
+};
 
 class EditorWindow {
 
@@ -30,7 +39,12 @@ private:
     void highlightTileOnHover(sf::Vector2i pos);
     bool isColliderVertClicked(sf::Vector2f mouse);
     void drawSelectionHighlight(EditorContext& context);
-
+    void fillSelectionsWithTile(EditorContext& context);
+    void deleteSelectedTiles(EditorContext& context);
+    void deselectTiles(EditorContext& context);
+    void moveTiles(EditorContext& context);
+    void moveTilesPreview(EditorContext& context);
+    void drawTileDebugInfo(EditorContext& context,sf::Vector2i debugInspectedCoord);
 
     void updateCamera(EditorContext& context,const sf::Time& dt);
 
@@ -50,8 +64,27 @@ private:
 
     bool bDrawDebug = true;
 
+    std::set<std::pair<int,int>> selectedTiles= {};
+    std::set<std::pair<int,int>> selectedTiles_temp= {};
+    std::set<std::pair<int,int>> movingTiles= {};
+
+    bool isMovingTiles = false;
+    sf::Vector2i moveStartTileCoord = {0,0};
+    sf::Vector2i moveOffset = {0,0};
+
+
 };
 
+
+
+inline void EditorWindow::deleteSelectedTiles(EditorContext &context) {
+
+    for (auto& tile: selectedTiles) {
+        sf::Vector2i gridPos = {tile.first,tile.second};
+        context.currentLayer->removeTile(gridPos);
+    }
+
+}
 
 inline void EditorWindow::drawPlayerDebug(EditorContext &context) {
     Player* p = context.entityManager->getPlayer();
