@@ -1,6 +1,6 @@
 # Game Project
 
-A C++ game built with SFML, ImGui, and ImGui-SFML.
+An in progress C++ isometric graphics game engine built with SFML, ImGui, and ImGui-SFML.
 
 ## Prerequisites
 
